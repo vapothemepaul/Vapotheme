@@ -149,13 +149,22 @@
     .logout-btn{width:100%;padding:13px;border-radius:12px;border:1.5px solid var(--border);background:white;color:var(--red);font-size:14px;font-weight:700;cursor:pointer;}
     .section-divider{font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;padding:8px 0 4px;}
 
-    /* iPhone safe area - definitive fix */
-    :root { --navy-bottom: #1a1a2e; }
-    html { background: #1a1a2e !important; }
-    body { background: #1a1a2e !important; }
+    /* iPhone safe area - camouflage with navy */
+    :root, html, body { background: #1a1a2e !important; }
     #app { background: #1a1a2e !important; }
     .page { background: #f2f2f7 !important; }
     #auth-screen { background: #1a1a2e !important; }
+    /* Cover safe area bottom with navy */
+    .bottomnav::after {
+      content: '';
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: env(safe-area-inset-bottom);
+      background: #1a1a2e;
+      z-index: 51;
+    }
   </style>
 </head>
 <body>
@@ -682,7 +691,7 @@ function renderNotes(){
     return `<div class="ncard"><div class="nhdr"><div class="nauthor">${n.author||'Admin'}</div><div class="ndate">${ds}</div></div>
     <div class="nbody">${n.text}</div>
     <span class="ntag ${TGCLS[n.tag]||'tg-info'}">${TGLBL[n.tag]||'Info'}</span>
-    ${isMgr()?`<button onclick="delNote('${n.id}')" style="float:right;background:none;border:none;color:var(--text2);font-size:12px;cursor:pointer;margin-top:8px;">✕ Supprimer</button>`:''}
+    ${isAdm()?`<button onclick="delNote('${n.id}')" style="float:right;padding:4px 10px;border-radius:8px;border:1px solid #F09595;background:var(--red-bg);color:var(--red);font-size:11px;font-weight:600;cursor:pointer;margin-top:8px;">Supprimer</button>":''}
     </div>`;
   }).join('');
 }
@@ -822,8 +831,12 @@ function renderProfil(){
       <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:10px;">Mon compte</div>
       <button onclick="openChangeName()" style="width:100%;padding:11px;border-radius:10px;border:1.5px solid var(--border);background:white;color:var(--text);font-size:14px;font-weight:600;cursor:pointer;margin-bottom:8px;">✏️ Modifier mon prénom</button>
     </div>
+    <div class="card">
+      <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:10px;">Application</div>
+      <button onclick="forceUpdate()" style="width:100%;padding:11px;border-radius:10px;border:1.5px solid var(--border);background:white;color:var(--blue);font-size:14px;font-weight:600;cursor:pointer;margin-bottom:8px;">🔄 Mettre à jour l'app</button>
+    </div>
     <button class="logout-btn" onclick="doLogout()">Se déconnecter</button>
-  `;
+  \`;
 }
 window.doLogout=function(){signOut(auth);};
 
@@ -844,6 +857,21 @@ window.openNotifs=async function(){
   }).join('');
 };
 window.closeNotifs=()=>document.getElementById('npanel').classList.remove('open');
+
+window.forceUpdate = function() {
+  if('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then(regs => {
+      regs.forEach(r => r.unregister());
+    });
+  }
+  // Clear all caches
+  if('caches' in window) {
+    caches.keys().then(keys => keys.forEach(k => caches.delete(k)));
+  }
+  toast('🔄 Mise à jour en cours...');
+  setTimeout(() => window.location.reload(true), 1000);
+};
+
 
 // RENFORT PLANNING
 window.openRenfortModal = function() {
