@@ -283,6 +283,64 @@
   </div>
 </div>
 
+
+<!-- Modal changement de prénom (première connexion) -->
+<div class="overlay" id="mfirstlogin">
+  <div class="sheet">
+    <div class="handle"></div>
+    <div class="mtitle">Bienvenue ! 👋</div>
+    <div class="msub">Avant de commencer, confirmez votre prénom et nom.</div>
+    <div class="mfield"><div class="mlbl">Votre prénom et nom</div><input class="minput" id="fl-name" placeholder="ex: Sophie Laurent"></div>
+    <div class="mactions"><button class="bconfirm" style="flex:1;" onclick="saveFirstLogin()">Confirmer</button></div>
+  </div>
+</div>
+
+<!-- Modal modifier prénom (profil) -->
+<div class="overlay" id="mchangename">
+  <div class="sheet">
+    <div class="handle"></div>
+    <div class="mtitle">Modifier mon prénom</div>
+    <div class="mfield"><div class="mlbl">Prénom et nom</div><input class="minput" id="cn-name" placeholder="ex: Sophie Laurent"></div>
+    <div class="mactions"><button class="bcancel" onclick="closeModal('mchangename')">Annuler</button><button class="bconfirm" onclick="saveChangeName()">Enregistrer</button></div>
+  </div>
+</div>
+
+<!-- Modal modifier prénom membre (admin) -->
+<div class="overlay" id="meditname">
+  <div class="sheet">
+    <div class="handle"></div>
+    <div class="mtitle" id="men-title">Modifier le nom</div>
+    <div class="mfield"><div class="mlbl">Prénom et nom</div><input class="minput" id="en-name" placeholder="ex: Sophie Laurent"></div>
+    <div class="mactions"><button class="bcancel" onclick="closeModal('meditname')">Annuler</button><button class="bconfirm" onclick="saveEditName()">Enregistrer</button></div>
+  </div>
+</div>
+
+
+<!-- Modal ajout renfort planning -->
+<div class="overlay" id="mrenfort">
+  <div class="sheet">
+    <div class="handle"></div>
+    <div class="mtitle">Ajouter un renfort</div>
+    <div class="msub">Un employé d'une autre boutique vient aider</div>
+    <div class="mfield"><div class="mlbl">Boutique d'accueil</div><select id="rf-dest-boutique" onchange="loadRenfortEmps()"></select></div>
+    <div class="mfield"><div class="mlbl">Employé en renfort</div><select id="rf-emp-select"></select></div>
+    <div class="mfield"><div class="mlbl">Jour</div>
+      <select id="rf-day">
+        <option value="0">Lundi</option><option value="1">Mardi</option><option value="2">Mercredi</option>
+        <option value="3">Jeudi</option><option value="4">Vendredi</option><option value="5">Samedi</option>
+      </select>
+    </div>
+    <div class="mfield"><div class="mlbl">Créneau</div>
+      <select id="rf-creneau">
+        <option value="m">Matin (9h30–13h)</option>
+        <option value="a">Après-midi (14h–19h)</option>
+        <option value="j">Journée complète (9h30–19h)</option>
+      </select>
+    </div>
+    <div class="mactions"><button class="bcancel" onclick="closeModal('mrenfort')">Annuler</button><button class="bconfirm" onclick="saveRenfort()">Ajouter</button></div>
+  </div>
+</div>
+
 <div id="toast"></div>
 
 <script type="module">
@@ -295,8 +353,8 @@ const fbApp=initializeApp(FB);
 const db=getFirestore(fbApp);
 const auth=getAuth(fbApp);
 
-const DAYS=['Lu','Ma','Me','Je','Ve'];
-const DAYSF=['Lundi','Mardi','Mercredi','Jeudi','Vendredi'];
+const DAYS=['Lu','Ma','Me','Je','Ve','Sa'];
+const DAYSF=['Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
 const DEF={m:{s:'09:30',e:'13:00'},a:{s:'14:00',e:'19:00'},j:{s:'09:30',e:'19:00'},r:{s:'',e:''},cp:{s:'',e:''},fo:{s:'09:30',e:'19:00'},rf:{s:'09:30',e:'19:00'}};
 const QUICK={
   m:[['9h30–13h','09:30','13:00'],['Début 10h','10:00','13:00'],['Fin 12h','09:30','12:00'],['Prolongé 14h','09:30','14:00']],
@@ -334,7 +392,7 @@ function wst(w){if(w==='default')return'def';if(w===0)return'cur';if(w===1)retur
 function mkCell(t){return{t,...(DEF[t]||DEF.r)};}
 function mkDefaultForBoutique(bid){
   const ms=members.filter(m=>m.boutique===bid);
-  const pat=[['m','m','r','a','a'],['a','r','a','m','m'],['j','a','m','r','a'],['m','m','a','m','r'],['r','a','m','r','m']];
+  const pat=[['m','m','r','a','a','m'],['a','r','a','m','m','a'],['j','a','m','r','a','r'],['m','m','a','m','r','m'],['r','a','m','r','m','a']];
   const res={};
   ms.forEach((m,i)=>{res[m.id]=(pat[i%pat.length]).map(t=>mkCell(t));});
   return res;
@@ -375,7 +433,7 @@ onAuthStateChanged(auth,async u=>{
       if(d.exists()){curRole=d.data().role||'emp';curName=d.data().name||u.email;}
       else{curRole='admin';curName='Admin';await setDoc(doc(db,'users',u.uid),{role:'admin',name:'Admin',email:u.email});}
     }catch{curRole='emp';curName=u.email;}
-    showApp();loadAll();
+    showApp();loadAll();setTimeout(checkFirstLogin, 1000);
   }else{
     document.getElementById('auth-screen').style.display='flex';
     document.getElementById('app').style.display='none';
@@ -476,7 +534,7 @@ function renderPlanning(){
 
   boutiques.forEach(b=>{
     const ms=members.filter(m=>m.boutique===b.id);
-    const cols=`52px repeat(5,1fr)`;
+    const cols=`48px repeat(6,1fr)`;
     h+=`<div class="bcard"><div class="bheader"><div class="bname">${b.name}</div><div class="ecnt">${ms.length} employés</div></div>`;
     h+=`<div class="pgrid" style="grid-template-columns:${cols};gap:3px;margin-bottom:3px;"><div></div>${DAYS.map(d=>`<div class="dayh">${d}</div>`).join('')}</div>`;
     if(!ms.length){h+=`<div style="text-align:center;padding:12px;color:var(--text2);font-size:12px;">Aucun employé dans cette boutique</div>`;}
@@ -508,6 +566,7 @@ function renderPlanning(){
   });
 
   if(canEdit){
+    h+=`<button class="btn-main" style="background:white;color:var(--navy);border:1.5px solid var(--border);margin-bottom:6px;" onclick="openRenfortModal()">+ Ajouter un renfort</button>`;
     const lbl=isDef?'Enregistrer le planning par défaut':st==='cur'?'Enregistrer & notifier':'Enregistrer le planning';
     h+=`<button class="btn-main" onclick="savePlan()">${lbl}</button>`;
   }
@@ -611,7 +670,7 @@ function renderEquipe(){
         <div class="av ${AVC[i%5]}">${ini(m.name)}</div>
         <div class="pinfo"><div class="pnm">${m.name||'?'}</div><div class="psub">${m.email||''}</div></div>
         <span class="pill ${rcls}">${rlbl}</span>
-        ${isAdm()?`<button class="icon-btn" onclick="openEditMembre('${m.id}')">⚙️</button>`:''}
+        ${isAdm()?`<button class="icon-btn" onclick="openEditName('${m.id}')" style="margin-right:4px;">✏️</button><button class="icon-btn" onclick="openEditMembre('${m.id}')">⚙️</button>`:''}
       </div>`;
     });
     h+=`</div>`;
@@ -627,7 +686,7 @@ function renderEquipe(){
         <div class="av ${AVC[i%5]}">${ini(m.name)}</div>
         <div class="pinfo"><div class="pnm">${m.name||'?'}</div></div>
         <span class="pill ${rcls}">${rlbl}</span>
-        ${isAdm()?`<button class="icon-btn" onclick="openEditMembre('${m.id}')">⚙️</button>`:''}
+        ${isAdm()?`<button class="icon-btn" onclick="openEditName('${m.id}')" style="margin-right:4px;">✏️</button><button class="icon-btn" onclick="openEditMembre('${m.id}')">⚙️</button>`:''}
       </div>`;
     });
     h+=`</div>`;
@@ -677,6 +736,7 @@ window.openEditMembre=function(id){
 };
 window.applyRole=async function(){
   if(!editingMember)return;
+  if(!isAdm()){toast('Seul un admin peut modifier les rôles');return;}
   const role=document.getElementById('mrole-select').value;
   const boutique=document.getElementById('mrole-boutique').value;
   await updateDoc(doc(db,'users',editingMember.id),{role,boutique});
@@ -714,6 +774,10 @@ function renderProfil(){
         <span class="role-pill ${rcls}" style="display:inline-block;margin-top:6px;">${rl}</span>
       </div>
     </div>
+    <div class="card" style="margin-top:0;">
+      <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:10px;">Mon compte</div>
+      <button onclick="openChangeName()" style="width:100%;padding:11px;border-radius:10px;border:1.5px solid var(--border);background:white;color:var(--text);font-size:14px;font-weight:600;cursor:pointer;margin-bottom:8px;">✏️ Modifier mon prénom</button>
+    </div>
     <button class="logout-btn" onclick="doLogout()">Se déconnecter</button>
   `;
 }
@@ -736,6 +800,89 @@ window.openNotifs=async function(){
   }).join('');
 };
 window.closeNotifs=()=>document.getElementById('npanel').classList.remove('open');
+
+// RENFORT PLANNING
+window.openRenfortModal = function() {
+  const sel = document.getElementById('rf-dest-boutique');
+  sel.innerHTML = boutiques.map(b => `<option value="${b.id}">${b.name}</option>`).join('');
+  loadRenfortEmps();
+  openModal('mrenfort');
+};
+window.loadRenfortEmps = function() {
+  const bid = document.getElementById('rf-dest-boutique').value;
+  // Show members NOT from this boutique
+  const others = members.filter(m => m.boutique !== bid);
+  const sel = document.getElementById('rf-emp-select');
+  sel.innerHTML = others.map(m => `<option value="${m.id}">${m.name} (${boutiques.find(b=>b.id===m.boutique)?.name||'?'})</option>`).join('');
+};
+window.saveRenfort = function() {
+  const bid = document.getElementById('rf-dest-boutique').value;
+  const mid = document.getElementById('rf-emp-select').value;
+  const di = parseInt(document.getElementById('rf-day').value);
+  const creneau = document.getElementById('rf-creneau').value;
+  const emp = members.find(m => m.id === mid);
+  const boutDest = boutiques.find(b => b.id === bid);
+  if (!emp || !boutDest) return;
+  const data = wdata(curWeek, bid);
+  if (!data[mid]) data[mid] = DAYS.map(() => mkCell('r'));
+  data[mid][di] = { t: 'rf', s: DEF[creneau]?.s || '09:30', e: DEF[creneau]?.e || '19:00', rfBoutique: boutDest.name, rfFrom: boutiques.find(b=>b.id===emp.boutique)?.name || '?' };
+  closeModal('mrenfort');
+  renderPlanning();
+  toast(`✓ Renfort de ${emp.name} ajouté !`);
+};
+
+
+// FIRST LOGIN CHECK
+async function checkFirstLogin() {
+  if (!curName || curName === 'Admin' || curName === curUser?.email) {
+    document.getElementById('fl-name').value = curName !== curUser?.email ? curName : '';
+    openModal('mfirstlogin');
+  }
+}
+window.saveFirstLogin = async function() {
+  const name = document.getElementById('fl-name').value.trim();
+  if (!name) { toast('Entrez votre prénom et nom'); return; }
+  await updateDoc(doc(db, 'users', curUid), { name });
+  curName = name;
+  document.getElementById('tsub').textContent = `Bonjour, ${curName} 👋`;
+  closeModal('mfirstlogin');
+  renderProfil();
+  toast(`Bienvenue ${name} !`);
+};
+
+// CHANGE OWN NAME
+window.openChangeName = function() {
+  document.getElementById('cn-name').value = curName;
+  openModal('mchangename');
+};
+window.saveChangeName = async function() {
+  const name = document.getElementById('cn-name').value.trim();
+  if (!name) return;
+  await updateDoc(doc(db, 'users', curUid), { name });
+  curName = name;
+  document.getElementById('tsub').textContent = `Bonjour, ${curName} 👋`;
+  closeModal('mchangename');
+  renderProfil();
+  toast('✓ Prénom mis à jour !');
+};
+
+// ADMIN EDIT MEMBER NAME
+let editingNameMember = null;
+window.openEditName = function(id) {
+  editingNameMember = members.find(m => m.id === id);
+  if (!editingNameMember) return;
+  document.getElementById('men-title').textContent = `Modifier : ${editingNameMember.name}`;
+  document.getElementById('en-name').value = editingNameMember.name || '';
+  openModal('meditname');
+};
+window.saveEditName = async function() {
+  const name = document.getElementById('en-name').value.trim();
+  if (!name || !editingNameMember) return;
+  await updateDoc(doc(db, 'users', editingNameMember.id), { name });
+  closeModal('meditname');
+  toast('✓ Nom mis à jour !');
+};
+
 </script>
 </body>
 </html>
