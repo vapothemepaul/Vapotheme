@@ -93,10 +93,7 @@
     .nav-arrow{background:rgba(255,255,255,0.12);border:none;color:white;width:30px;height:30px;border-radius:8px;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
     .nav-arrow:disabled{opacity:0.2;cursor:default;}
 
-    .mode-bar{background:var(--navy);padding:0 14px 10px;display:flex;gap:6px;flex-shrink:0;}
-    .mbtn{padding:5px 14px;border-radius:20px;border:none;font-size:11px;font-weight:600;cursor:pointer;color:rgba(255,255,255,0.5);background:rgba(255,255,255,0.08);}
-    .mbtn.ae{background:var(--teal-bg);color:var(--teal);}
-    .mbtn.aa{background:var(--purple-bg);color:var(--purple);}
+
 
     .page{
       flex:1;min-height:0;
@@ -247,10 +244,7 @@
     <div class="week-lbl" id="wlbl"></div>
     <button class="nav-arrow" id="bnext" onclick="changeWeek(1)">›</button>
   </div>
-  <div id="mbar" class="mode-bar" style="display:none;">
-    <button class="mbtn ae" id="mbe" onclick="setMode('emp')">Vue employé</button>
-    <button class="mbtn" id="mba" onclick="setMode('adm')">Vue admin</button>
-  </div>
+
   <div class="page active" id="page-planning"></div>
   <div class="page" id="page-notes"></div>
   <div class="page" id="page-equipe"></div>
@@ -435,7 +429,7 @@ const TGCLS={urgent:'tg-urgent',info:'tg-info',rh:'tg-rh',general:'tg-general'};
 const AVC=['av0','av1','av2','av3','av4'];
 
 let boutiques=[],members=[],defPlan={},wkOver={};
-let curWeek=0,vMode='emp',ectx=null,editingMember=null,editingNameMember=null;
+let curWeek=0,ectx=null,editingMember=null,editingNameMember=null;
 let curUser=null,curRole='emp',curName='',curUid='';
 let notes=[],notifs=[];
 
@@ -529,7 +523,7 @@ function showApp(){
   const rp=document.getElementById('rpill');
   rp.textContent={admin:'Admin',manager:'Manager',emp:'Employé'}[curRole]||'Employé';
   rp.className='role-pill '+({admin:'role-admin',manager:'role-manager',emp:'role-emp'}[curRole]||'role-emp');
-  if(!isMgr())document.getElementById('mba').style.display='none';
+
   showPage('planning');
 }
 
@@ -563,7 +557,7 @@ window.showPage=function(p){
     document.getElementById('tab-'+x).classList.toggle('active',x===p);
   });
   document.getElementById('wnav').style.display=p==='planning'?'flex':'none';
-  document.getElementById('mbar').style.display=(isMgr()&&p==='planning')?'flex':'none';
+
   const fab=document.getElementById('fab');
   fab.style.display=(isMgr()&&p==='notes')||(isAdm()&&p==='equipe')?'flex':'none';
   if(p==='planning')renderPlanning();
@@ -582,26 +576,21 @@ window.changeWeek=function(d){
   if(curWeek==='default'&&d===1){curWeek=0;renderPlanning();return;}
   const n=curWeek+d;if(n<0||n>3)return;curWeek=n;renderPlanning();
 };
-window.setMode=function(m){
-  vMode=m;
-  document.getElementById('mbe').className='mbtn'+(m==='emp'?' ae':'');
-  document.getElementById('mba').className='mbtn'+(m==='adm'?' aa':'');
-  renderPlanning();
-};
+
 
 // ===== PLANNING =====
 function renderPlanning(){
   const st=wst(curWeek),isDef=curWeek==='default';
-  const canEdit=isMgr()&&vMode==='adm'&&(isDef||st==='cur'||st==='nxt'||st==='fut');
+  const canEdit=isMgr()&&(isDef||st==='cur'||st==='nxt'||st==='fut');
   const badges={def:`<span class="wbadge bd-def">Défaut</span>`,cur:`<span class="wbadge bd-cur">Cette semaine</span>`,nxt:`<span class="wbadge bd-nxt">Semaine suivante</span>`,fut:`<span class="wbadge bd-fut">À venir</span>`,old:''};
   document.getElementById('wlbl').innerHTML=(isDef?'Planning par défaut':wlabel(curWeek))+'<br>'+(badges[st]||'');
   document.getElementById('bprev').disabled=curWeek==='default';
   document.getElementById('bnext').disabled=curWeek>=3;
   const pg=document.getElementById('page-planning');
   let h='';
-  if(isDef&&vMode==='adm')h+=`<div class="banner bn-purple">📋 Planning par défaut <button class="rst-btn" onclick="resetDef()">Remettre à zéro</button></div>`;
-  if(!isDef&&vMode==='adm'&&(st==='nxt'||st==='fut'))h+=`<div class="banner bn-gray">Basé sur le planning par défaut <button class="rst-btn" onclick="resetWk()">↺ Reprendre le défaut</button></div>`;
-  if(vMode==='adm'&&st==='cur')h+=`<div class="banner bn-green">✏️ Modifications notifiées à l'enregistrement</div>`;
+  if(isDef&&isMgr())h+=`<div class="banner bn-purple">📋 Planning par défaut <button class="rst-btn" onclick="resetDef()">Remettre à zéro</button></div>`;
+  if(!isDef&&isMgr()&&(st==='nxt'||st==='fut'))h+=`<div class="banner bn-gray">Basé sur le planning par défaut <button class="rst-btn" onclick="resetWk()">↺ Reprendre le défaut</button></div>`;
+  if(isMgr()&&st==='cur')h+=`<div class="banner bn-green">✏️ Modifications notifiées à l'enregistrement</div>`;
   if(!boutiques.length){h+=`<div class="empty"><div class="empty-icon">🏪</div><div class="empty-text">Aucune boutique créée</div></div>`;pg.innerHTML=h;return;}
   boutiques.forEach(b=>{
     const ms=members.filter(m=>m.boutique===b.id);
@@ -620,9 +609,9 @@ function renderPlanning(){
         const ec=canEdit?' ed':'';
         const oc=canEdit?`onclick="openPE('${b.id}','${m.id}',${di})"`:'';
         const mc=isDiff&&vMode==='adm'?' smodified':'';
-        const ts=vMode==='adm'&&c.t!=='r'&&c.t!=='cp'?fmt(c.s)+'–'+fmt(c.e):'';
+        const ts=isMgr()&&c.t!=='r'&&c.t!=='cp'?fmt(c.s)+'–'+fmt(c.e):'';
         const extra=c.t==='rf'&&c.rfBoutique?`<span class="stime">${c.rfBoutique}</span>`:'';
-        h+=`<div class="shift ${CLS[c.t]||'s-r'}${ec}${mc}" ${oc}>${LBL[c.t]||'Repos'}${ts?`<span class="stime">${ts}</span>`:''}${extra}${isDiff&&vMode==='adm'?`<span class="smod">✱</span>`:''}</div>`;
+        h+=`<div class="shift ${CLS[c.t]||'s-r'}${ec}${mc}" ${oc}>${LBL[c.t]||'Repos'}${ts?`<span class="stime">${ts}</span>`:''}${extra}${isDiff&&isMgr()?`<span class="smod">✱</span>`:''}</div>`;
       });
       h+=`</div>`;
     });
