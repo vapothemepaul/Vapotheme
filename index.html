@@ -417,19 +417,9 @@
 <div id="toast"></div>
 
 <script type="module">
-// Prevent zoom on double tap and pinch
+// Prevent pinch zoom only
 document.addEventListener('touchmove', function(e) {
   if(e.touches.length > 1) e.preventDefault();
-}, {passive: false});
-let lastTap = 0;
-document.addEventListener('touchend', function(e) {
-  const now = Date.now();
-  if(now - lastTap < 300) e.preventDefault();
-  lastTap = now;
-}, {passive: false});
-// Prevent pull to refresh
-document.body.addEventListener('touchstart', function(e) {
-  if(e.touches[0].clientY <= 0) e.preventDefault();
 }, {passive: false});
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
