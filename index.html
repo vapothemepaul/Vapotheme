@@ -76,7 +76,7 @@
     #app{
       display:none;flex-direction:column;
       height:100vh;height:100dvh;
-      background:var(--bg);
+      background:var(--navy);
       overflow:hidden;
       position:fixed;
       top:0;left:0;right:0;bottom:0;
@@ -111,7 +111,7 @@
     .mbtn.ae{background:var(--teal-bg);color:var(--teal);}
     .mbtn.aa{background:var(--purple-bg);color:var(--purple);}
 
-    .page{flex:1;min-height:0;padding:12px;display:none;flex-direction:column;gap:10px;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding-bottom:calc(90px + env(safe-area-inset-bottom));}
+    .page{flex:1;min-height:0;padding:12px;display:none;flex-direction:column;gap:10px;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding-bottom:calc(90px + env(safe-area-inset-bottom));background:#f2f2f7;}
     .page.active{display:flex;}
 
     .bottomnav{
@@ -139,8 +139,8 @@
     .ecnt{font-size:11px;padding:3px 10px;border-radius:20px;background:var(--blue-bg);color:var(--blue);font-weight:600;}
     .pgrid{display:grid;gap:3px;width:100%;}
     .dayh{text-align:center;font-size:11px;font-weight:700;color:var(--text2);}
-    .pname{font-size:12px;color:var(--text);font-weight:500;display:flex;align-items:center;overflow:hidden;white-space:nowrap;}
-    .shift{border-radius:8px;padding:5px 1px;text-align:center;font-size:10px;font-weight:700;min-height:38px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;overflow:hidden;}
+    .pname{font-size:11px;color:var(--text);font-weight:500;display:flex;align-items:center;overflow:hidden;white-space:nowrap;max-width:42px;}
+    .shift{border-radius:6px;padding:4px 1px;text-align:center;font-size:10px;font-weight:700;min-height:36px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;overflow:hidden;width:100%;}
     .shift.ed{cursor:pointer;}.shift.ed:active{opacity:0.65;}
     .s-m{background:var(--green-bg);color:var(--green);}.s-a{background:var(--blue-bg);color:var(--blue);}
     .s-j{background:var(--purple-bg);color:var(--purple);}.s-r{background:var(--gray-bg);color:var(--gray);}
@@ -601,7 +601,7 @@ function renderPlanning(){
   if(!boutiques.length){h+=`<div class="empty"><div class="empty-icon">🏪</div><div class="empty-text">Aucune boutique créée</div></div>`;pg.innerHTML=h;return;}
   boutiques.forEach(b=>{
     const ms=members.filter(m=>m.boutique===b.id);
-    const cols=`44px repeat(6,1fr)`;
+    const cols=`42px repeat(6,minmax(0,1fr))`;
     h+=`<div class="bcard"><div class="bheader"><div class="bname">${b.name}</div><div class="ecnt">${ms.length} employés</div></div>`;
     h+=`<div class="pgrid" style="grid-template-columns:${cols};gap:2px;margin-bottom:2px;"><div></div>${DAYS.map(d=>`<div class="dayh">${d}</div>`).join('')}</div>`;
     if(!ms.length)h+=`<div style="text-align:center;padding:12px;color:var(--text2);font-size:12px;">Aucun employé</div>`;
