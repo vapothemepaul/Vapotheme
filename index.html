@@ -430,10 +430,28 @@ onAuthStateChanged(auth,async u=>{
     curUser=u;curUid=u.uid;
     try{
       const d=await getDoc(doc(db,'users',u.uid));
-      if(d.exists()){curRole=d.data().role||'emp';curName=d.data().name||u.email;}
-      else{curRole='admin';curName='Admin';await setDoc(doc(db,'users',u.uid),{role:'admin',name:'Admin',email:u.email});}
-    }catch{curRole='emp';curName=u.email;}
-    showApp();loadAll();setTimeout(checkFirstLogin, 1000);
+      if(d.exists()){
+        const data=d.data();
+        curRole=data.role||'emp';
+        curName=data.name||'';
+        const needsName = !data.firstLoginDone && (!data.name || data.name.trim()==='');
+        showApp();loadAll();
+        if(needsName){
+          setTimeout(()=>{
+            document.getElementById('fl-name').value='';
+            openModal('mfirstlogin');
+          },800);
+        }
+      } else {
+        curRole='admin';curName='';
+        await setDoc(doc(db,'users',u.uid),{role:'admin',name:'',email:u.email,firstLoginDone:false});
+        showApp();loadAll();
+        setTimeout(()=>{
+          document.getElementById('fl-name').value='';
+          openModal('mfirstlogin');
+        },800);
+      }
+    }catch{curRole='emp';curName=u.email;showApp();loadAll();}
   }else{
     document.getElementById('auth-screen').style.display='flex';
     document.getElementById('app').style.display='none';
@@ -842,12 +860,14 @@ async function checkFirstLogin() {
 window.saveFirstLogin = async function() {
   const name = document.getElementById('fl-name').value.trim();
   if (!name) { toast('Entrez votre prénom et nom'); return; }
-  await updateDoc(doc(db, 'users', curUid), { name });
-  curName = name;
-  document.getElementById('tsub').textContent = `Bonjour, ${curName} 👋`;
-  closeModal('mfirstlogin');
-  renderProfil();
-  toast(`Bienvenue ${name} !`);
+  try {
+    await updateDoc(doc(db, 'users', curUid), { name, firstLoginDone: true });
+    curName = name;
+    document.getElementById('tsub').textContent = `Bonjour, ${curName} 👋`;
+    closeModal('mfirstlogin');
+    renderProfil();
+    toast(`Bienvenue ${name} !`);
+  } catch(e) { toast('Erreur lors de la sauvegarde'); }
 };
 
 // CHANGE OWN NAME
