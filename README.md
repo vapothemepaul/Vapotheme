@@ -1,4 +1,4 @@
-# Vapotehme — App de gestion d'équipe
+# Vapotheme — App de gestion d'équipe
 
 ## Mise en ligne sur Vercel
 
