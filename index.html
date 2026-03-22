@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="theme-color" content="#1a1a2e">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -11,8 +11,7 @@
   <link rel="manifest" href="manifest.json">
   <style>
     *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
-    html,body{height:100%;width:100%;background:#1a1a2e;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;}
-
+    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f2f2f7;min-height:100vh;max-width:480px;margin:0 auto;}
     :root{
       --navy:#1a1a2e;--navy2:#232340;
       --green-bg:#EAF3DE;--green:#3B6D11;
@@ -25,21 +24,7 @@
       --red-bg:#FCEBEB;--red:#A32D2D;
       --border:#e5e5ea;--card:#fff;--text:#1c1c1e;--text2:#6c6c70;--bg:#f2f2f7;
     }
-    #auth-screen {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      width: 100%;
-      height: 100dvh;
-      padding: 32px 24px;
-      padding-bottom: calc(32px + env(safe-area-inset-bottom));
-      background: #1a1a2e;
-      z-index: 999;
-      overflow-y: auto;
-    }
+    #auth-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:32px 24px;background:var(--navy);}
     .auth-logo{font-size:38px;font-weight:800;color:white;letter-spacing:-1px;}
     .auth-tagline{font-size:13px;color:rgba(255,255,255,0.45);margin-top:4px;margin-bottom:40px;}
     .auth-card{background:white;border-radius:20px;padding:24px;width:100%;max-width:340px;}
@@ -51,26 +36,8 @@
     .btn-main{width:100%;padding:14px;border-radius:12px;border:none;background:var(--navy);color:white;font-size:15px;font-weight:700;cursor:pointer;margin-top:6px;}
     .btn-main:active{opacity:0.8;}
     .auth-error{font-size:12px;color:var(--red);margin-top:10px;text-align:center;min-height:16px;}
-    #app {
-      display: none;
-      flex-direction: column;
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      width: 100%;
-      height: 100dvh;
-      overflow: hidden;
-      background: #1a1a2e;
-    }
-    .topbar {
-      background: var(--navy);
-      color: white;
-      padding: 10px 16px 14px;
-      padding-top: calc(10px + env(safe-area-inset-top));
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-shrink: 0;
-    }
+    #app{display:none;flex-direction:column;min-height:100vh;}
+    .topbar{background:var(--navy);color:white;padding:10px 16px 14px;padding-top:calc(10px + env(safe-area-inset-top));display:flex;align-items:center;justify-content:space-between;}
     .t-title{font-size:20px;font-weight:800;letter-spacing:-0.5px;}
     .t-sub{font-size:11px;opacity:0.5;margin-top:1px;}
     .topbar-right{display:flex;gap:8px;align-items:center;}
@@ -81,55 +48,19 @@
     .bell-btn{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.12);border:none;color:white;font-size:16px;cursor:pointer;position:relative;display:flex;align-items:center;justify-content:center;}
     .bell-dot{width:8px;height:8px;border-radius:50%;background:#ff5f5f;position:absolute;top:5px;right:5px;border:1.5px solid var(--navy);display:none;}
     .bell-dot.show{display:block;}
-    .week-nav-bar {
-      background: var(--navy2);
-      padding: 9px 14px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-shrink: 0;
-    }
+    .week-nav-bar{background:var(--navy2);padding:9px 14px;display:flex;align-items:center;gap:8px;}
     .week-lbl{color:white;font-size:12px;font-weight:600;text-align:center;flex:1;line-height:1.5;}
     .wbadge{font-size:10px;padding:2px 8px;border-radius:20px;display:inline-block;font-weight:600;}
     .bd-def{background:var(--amber);color:#fff;}.bd-cur{background:#1D9E75;color:#fff;}.bd-nxt{background:var(--purple);color:#fff;}.bd-fut{background:#5F5E5A;color:#fff;}
     .nav-arrow{background:rgba(255,255,255,0.12);border:none;color:white;width:30px;height:30px;border-radius:8px;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
     .nav-arrow:disabled{opacity:0.2;cursor:default;}
-    .mode-bar {
-      background: var(--navy);
-      padding: 0 14px 10px;
-      display: flex;
-      gap: 6px;
-      flex-shrink: 0;
-    }
+    .mode-bar{background:var(--navy);padding:0 14px 10px;display:flex;gap:6px;}
     .mbtn{padding:5px 14px;border-radius:20px;border:none;font-size:11px;font-weight:600;cursor:pointer;color:rgba(255,255,255,0.5);background:rgba(255,255,255,0.08);}
     .mbtn.ae{background:var(--teal-bg);color:var(--teal);}
     .mbtn.aa{background:var(--purple-bg);color:var(--purple);}
-    .page {
-      flex: 1;
-      min-height: 0;
-      padding: 12px;
-      padding-bottom: calc(70px + env(safe-area-inset-bottom));
-      display: none;
-      flex-direction: column;
-      gap: 10px;
-      overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
-      overscroll-behavior: none;
-      background: #f2f2f7;
-    }
-    .page-spacer{flex:1;min-height:0;}
+    .page{flex:1;padding:12px;display:none;flex-direction:column;gap:10px;padding-bottom:90px;}
     .page.active{display:flex;}
-    .bottomnav {
-      display: flex;
-      background: var(--navy);
-      padding: 8px 8px 0;
-      padding-bottom: env(safe-area-inset-bottom);
-      gap: 4px;
-      position: fixed;
-      bottom: 0; left: 0; right: 0;
-      width: 100%;
-      z-index: 50;
-    }
+    .bottomnav{display:flex;background:var(--navy);padding:8px;padding-bottom:calc(8px + env(safe-area-inset-bottom));gap:4px;position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;z-index:50;}
     .ntab{flex:1;padding:7px 4px;border:none;background:transparent;color:rgba(255,255,255,0.4);font-size:10px;font-weight:500;cursor:pointer;border-radius:10px;display:flex;flex-direction:column;align-items:center;gap:3px;}
     .ntab.active{background:rgba(255,255,255,0.14);color:white;}
     .ni{font-size:19px;line-height:1;}
@@ -166,7 +97,7 @@
     .ntag{display:inline-block;font-size:10px;padding:3px 9px;border-radius:20px;margin-top:8px;font-weight:600;}
     .tg-urgent{background:var(--red-bg);color:var(--red);}.tg-info{background:var(--teal-bg);color:var(--teal);}
     .tg-rh{background:var(--pink-bg);color:var(--pink);}.tg-general{background:var(--blue-bg);color:var(--blue);}
-    .fab{position:fixed;bottom:calc(60px + env(safe-area-inset-bottom));right:16px;width:52px;height:52px;border-radius:50%;background:var(--navy);border:none;color:white;font-size:26px;cursor:pointer;display:none;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(0,0,0,0.25);z-index:49;}
+    .fab{position:fixed;bottom:90px;right:16px;width:52px;height:52px;border-radius:50%;background:var(--navy);border:none;color:white;font-size:26px;cursor:pointer;display:none;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(0,0,0,0.25);}
     .prow{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);}
     .prow:last-child{border-bottom:none;}
     .av{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;}
@@ -181,7 +112,7 @@
     .pill-emp{background:var(--teal-bg);color:var(--teal);}
     .icon-btn{padding:5px 10px;border-radius:8px;border:1px solid var(--border);background:white;color:var(--text);font-size:12px;cursor:pointer;font-weight:500;}
     .icon-btn.danger{color:var(--red);border-color:#F09595;background:var(--red-bg);}
-    #npanel{position:fixed;top:0;left:0;right:0;bottom:0;width:100%;height:100%;background:var(--bg);z-index:100;display:none;flex-direction:column;}
+    #npanel{position:fixed;top:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;height:100%;background:var(--bg);z-index:100;display:none;flex-direction:column;}
     #npanel.open{display:flex;}
     .ntopbar{background:var(--navy);color:white;padding:14px 16px;padding-top:calc(14px + env(safe-area-inset-top));display:flex;align-items:center;justify-content:space-between;}
     .ntitle{font-size:17px;font-weight:700;}
@@ -191,9 +122,9 @@
     .ni-blue{border-left-color:var(--blue);}.ni-green{border-left-color:var(--green);}.ni-amber{border-left-color:var(--amber);}
     .nmsg{font-size:13px;font-weight:600;color:var(--text);}
     .ntime2{font-size:11px;color:var(--text2);margin-top:2px;}
-    .overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:200;align-items:flex-end;justify-content:center;}
+    .overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:200;align-items:flex-end;justify-content:center;}
     .overlay.open{display:flex;}
-    .sheet{background:white;border-radius:20px 20px 0 0;padding:20px;width:100%;max-height:90vh;overflow-y:auto;padding-bottom:calc(20px + env(safe-area-inset-bottom));}
+    .sheet{background:white;border-radius:20px 20px 0 0;padding:20px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;padding-bottom:calc(20px + env(safe-area-inset-bottom));}
     .handle{width:36px;height:4px;background:#e5e5ea;border-radius:2px;margin:0 auto 16px;}
     .mtitle{font-size:17px;font-weight:700;color:var(--text);margin-bottom:4px;}
     .msub{font-size:12px;color:var(--text2);margin-bottom:16px;}
@@ -208,12 +139,35 @@
     .mactions{display:flex;gap:8px;margin-top:16px;}
     .bcancel{flex:1;padding:13px;border-radius:12px;border:1.5px solid var(--border);background:white;color:var(--text);font-size:14px;font-weight:600;cursor:pointer;}
     .bconfirm{flex:2;padding:13px;border-radius:12px;border:none;background:var(--navy);color:white;font-size:14px;font-weight:700;cursor:pointer;}
-    #toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:rgba(28,28,30,0.92);color:white;font-size:13px;font-weight:600;padding:10px 20px;border-radius:20px;z-index:300;display:none;white-space:nowrap;max-width:90%;text-align:center;}
+    #toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:rgba(28,28,30,0.92);color:white;font-size:13px;font-weight:600;padding:10px 20px;border-radius:20px;z-index:300;display:none;white-space:nowrap;}
     #toast.show{display:block;}
     .empty{text-align:center;padding:40px 20px;color:var(--text2);}
     .empty-icon{font-size:40px;margin-bottom:10px;}
     .logout-btn{width:100%;padding:13px;border-radius:12px;border:1.5px solid var(--border);background:white;color:var(--red);font-size:14px;font-weight:700;cursor:pointer;}
     .section-divider{font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;padding:8px 0 4px;}
+
+    /* Responsive full screen */
+    html { background: #1a1a2e; }
+    body { 
+      background: #1a1a2e;
+      height: 100dvh;
+      overflow: hidden;
+    }
+    #auth-screen {
+      min-height: 100dvh;
+      padding-bottom: calc(32px + env(safe-area-inset-bottom));
+    }
+    #app {
+      height: 100dvh;
+      background: #1a1a2e;
+    }
+    .bottomnav {
+      padding-bottom: calc(8px + env(safe-area-inset-bottom)) !important;
+      background: #1a1a2e !important;
+    }
+    .page {
+      padding-bottom: calc(80px + env(safe-area-inset-bottom)) !important;
+    }
   </style>
 </head>
 <body>
@@ -248,9 +202,9 @@
     <button class="mbtn" id="mba" onclick="setMode('adm')">Vue admin</button>
   </div>
   <div class="page active" id="page-planning"></div>
-  <div class="page" id="page-notes"><div class="page-spacer"></div></div>
-  <div class="page" id="page-equipe"><div class="page-spacer"></div></div>
-  <div class="page" id="page-profil"><div class="page-spacer"></div></div>
+  <div class="page" id="page-notes"></div>
+  <div class="page" id="page-equipe"></div>
+  <div class="page" id="page-profil"></div>
   <button class="fab" id="fab" onclick="fabAction()">+</button>
   <div class="bottomnav">
     <button class="ntab active" id="tab-planning" onclick="showPage('planning')"><span class="ni">📅</span>Planning</button>
@@ -352,77 +306,9 @@
   </div>
 </div>
 
-
-<!-- Modal changement de prénom (première connexion) -->
-<div class="overlay" id="mfirstlogin">
-  <div class="sheet">
-    <div class="handle"></div>
-    <div class="mtitle">Bienvenue ! 👋</div>
-    <div class="msub">Avant de commencer, confirmez votre prénom et nom.</div>
-    <div class="mfield"><div class="mlbl">Votre prénom et nom</div><input class="minput" id="fl-name" placeholder="ex: Sophie Laurent"></div>
-    <div class="mactions"><button class="bconfirm" style="flex:1;" onclick="saveFirstLogin()">Confirmer</button></div>
-  </div>
-</div>
-
-<!-- Modal modifier prénom (profil) -->
-<div class="overlay" id="mchangename">
-  <div class="sheet">
-    <div class="handle"></div>
-    <div class="mtitle">Modifier mon prénom</div>
-    <div class="mfield"><div class="mlbl">Prénom et nom</div><input class="minput" id="cn-name" placeholder="ex: Sophie Laurent"></div>
-    <div class="mactions"><button class="bcancel" onclick="closeModal('mchangename')">Annuler</button><button class="bconfirm" onclick="saveChangeName()">Enregistrer</button></div>
-  </div>
-</div>
-
-<!-- Modal modifier prénom membre (admin) -->
-<div class="overlay" id="meditname">
-  <div class="sheet">
-    <div class="handle"></div>
-    <div class="mtitle" id="men-title">Modifier le nom</div>
-    <div class="mfield"><div class="mlbl">Prénom et nom</div><input class="minput" id="en-name" placeholder="ex: Sophie Laurent"></div>
-    <div class="mactions"><button class="bcancel" onclick="closeModal('meditname')">Annuler</button><button class="bconfirm" onclick="saveEditName()">Enregistrer</button></div>
-  </div>
-</div>
-
-
-<!-- Modal ajout renfort planning -->
-<div class="overlay" id="mrenfort">
-  <div class="sheet">
-    <div class="handle"></div>
-    <div class="mtitle">Ajouter un renfort</div>
-    <div class="msub">Un employé d'une autre boutique vient aider</div>
-    <div class="mfield"><div class="mlbl">Boutique d'accueil</div><select id="rf-dest-boutique" onchange="loadRenfortEmps()"></select></div>
-    <div class="mfield"><div class="mlbl">Employé en renfort</div><select id="rf-emp-select"></select></div>
-    <div class="mfield"><div class="mlbl">Jour</div>
-      <select id="rf-day">
-        <option value="0">Lundi</option><option value="1">Mardi</option><option value="2">Mercredi</option>
-        <option value="3">Jeudi</option><option value="4">Vendredi</option><option value="5">Samedi</option>
-      </select>
-    </div>
-    <div class="mfield"><div class="mlbl">Créneau</div>
-      <select id="rf-creneau">
-        <option value="m">Matin (9h30–13h)</option>
-        <option value="a">Après-midi (14h–19h)</option>
-        <option value="j">Journée complète (9h30–19h)</option>
-      </select>
-    </div>
-    <div class="mactions"><button class="bcancel" onclick="closeModal('mrenfort')">Annuler</button><button class="bconfirm" onclick="saveRenfort()">Ajouter</button></div>
-  </div>
-</div>
-
 <div id="toast"></div>
 
-<script>
-// Global bridges - ensure onclick works before module fully loads  
-function doLogin(){ if(window._doLogin) window._doLogin(); }
-function showPage(p){ if(window._showPage) window._showPage(p); }
-</script>
 <script type="module">
-// Prevent pinch zoom only
-document.addEventListener('touchmove', function(e) {
-  if(e.touches.length > 1) e.preventDefault();
-}, {passive: false});
-
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getFirestore,doc,getDoc,setDoc,collection,addDoc,updateDoc,deleteDoc,onSnapshot,serverTimestamp,query,orderBy,getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import { getAuth,signInWithEmailAndPassword,createUserWithEmailAndPassword,onAuthStateChanged,signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
@@ -432,8 +318,8 @@ const fbApp=initializeApp(FB);
 const db=getFirestore(fbApp);
 const auth=getAuth(fbApp);
 
-const DAYS=['Lu','Ma','Me','Je','Ve','Sa'];
-const DAYSF=['Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
+const DAYS=['Lu','Ma','Me','Je','Ve'];
+const DAYSF=['Lundi','Mardi','Mercredi','Jeudi','Vendredi'];
 const DEF={m:{s:'09:30',e:'13:00'},a:{s:'14:00',e:'19:00'},j:{s:'09:30',e:'19:00'},r:{s:'',e:''},cp:{s:'',e:''},fo:{s:'09:30',e:'19:00'},rf:{s:'09:30',e:'19:00'}};
 const QUICK={
   m:[['9h30–13h','09:30','13:00'],['Début 10h','10:00','13:00'],['Fin 12h','09:30','12:00'],['Prolongé 14h','09:30','14:00']],
@@ -471,7 +357,7 @@ function wst(w){if(w==='default')return'def';if(w===0)return'cur';if(w===1)retur
 function mkCell(t){return{t,...(DEF[t]||DEF.r)};}
 function mkDefaultForBoutique(bid){
   const ms=members.filter(m=>m.boutique===bid);
-  const pat=[['m','m','r','a','a','m'],['a','r','a','m','m','a'],['j','a','m','r','a','r'],['m','m','a','m','r','m'],['r','a','m','r','m','a']];
+  const pat=[['m','m','r','a','a'],['a','r','a','m','m'],['j','a','m','r','a'],['m','m','a','m','r'],['r','a','m','r','m']];
   const res={};
   ms.forEach((m,i)=>{res[m.id]=(pat[i%pat.length]).map(t=>mkCell(t));});
   return res;
@@ -496,7 +382,7 @@ window.openModal=id=>document.getElementById(id).classList.add('open');
 window.closeModal=id=>document.getElementById(id).classList.remove('open');
 
 // AUTH
-window._doLogin=window.doLogin=async()=>{
+window.doLogin=async()=>{
   const e=document.getElementById('ae').value.trim(),p=document.getElementById('ap').value;
   document.getElementById('aerr').textContent='';
   if(!e||!p){document.getElementById('aerr').textContent='Remplissez tous les champs.';return;}
@@ -509,28 +395,10 @@ onAuthStateChanged(auth,async u=>{
     curUser=u;curUid=u.uid;
     try{
       const d=await getDoc(doc(db,'users',u.uid));
-      if(d.exists()){
-        const data=d.data();
-        curRole=data.role||'emp';
-        curName=data.name||'';
-        const needsName = !data.firstLoginDone && (!data.name || data.name.trim()==='');
-        showApp();loadAll();
-        if(needsName){
-          setTimeout(()=>{
-            document.getElementById('fl-name').value='';
-            openModal('mfirstlogin');
-          },800);
-        }
-      } else {
-        curRole='admin';curName='';
-        await setDoc(doc(db,'users',u.uid),{role:'admin',name:'',email:u.email,firstLoginDone:false});
-        showApp();loadAll();
-        setTimeout(()=>{
-          document.getElementById('fl-name').value='';
-          openModal('mfirstlogin');
-        },800);
-      }
-    }catch{curRole='emp';curName=u.email;showApp();loadAll();}
+      if(d.exists()){curRole=d.data().role||'emp';curName=d.data().name||u.email;}
+      else{curRole='admin';curName='Admin';await setDoc(doc(db,'users',u.uid),{role:'admin',name:'Admin',email:u.email});}
+    }catch{curRole='emp';curName=u.email;}
+    showApp();loadAll();
   }else{
     document.getElementById('auth-screen').style.display='flex';
     document.getElementById('app').style.display='none';
@@ -579,7 +447,7 @@ async function loadAll(){
 }
 
 // NAV
-window._showPage=window.showPage=function(p){
+window.showPage=function(p){
   ['planning','notes','equipe','profil'].forEach(x=>{
     document.getElementById('page-'+x).classList.toggle('active',x===p);
     document.getElementById('tab-'+x).classList.toggle('active',x===p);
@@ -631,7 +499,7 @@ function renderPlanning(){
 
   boutiques.forEach(b=>{
     const ms=members.filter(m=>m.boutique===b.id);
-    const cols=`48px repeat(6,1fr)`;
+    const cols=`52px repeat(5,1fr)`;
     h+=`<div class="bcard"><div class="bheader"><div class="bname">${b.name}</div><div class="ecnt">${ms.length} employés</div></div>`;
     h+=`<div class="pgrid" style="grid-template-columns:${cols};gap:3px;margin-bottom:3px;"><div></div>${DAYS.map(d=>`<div class="dayh">${d}</div>`).join('')}</div>`;
     if(!ms.length){h+=`<div style="text-align:center;padding:12px;color:var(--text2);font-size:12px;">Aucun employé dans cette boutique</div>`;}
@@ -663,11 +531,10 @@ function renderPlanning(){
   });
 
   if(canEdit){
-    h+=`<button class="btn-main" style="background:white;color:var(--navy);border:1.5px solid var(--border);margin-bottom:6px;" onclick="openRenfortModal()">+ Ajouter un renfort</button>`;
     const lbl=isDef?'Enregistrer le planning par défaut':st==='cur'?'Enregistrer & notifier':'Enregistrer le planning';
     h+=`<button class="btn-main" onclick="savePlan()">${lbl}</button>`;
   }
-  pg.innerHTML=h+'<div class="page-spacer"></div>';
+  pg.innerHTML=h;
 }
 
 window.openPE=function(bid,mid,di){
@@ -735,7 +602,7 @@ function renderNotes(){
     return `<div class="ncard"><div class="nhdr"><div class="nauthor">${n.author||'Admin'}</div><div class="ndate">${ds}</div></div>
     <div class="nbody">${n.text}</div>
     <span class="ntag ${TGCLS[n.tag]||'tg-info'}">${TGLBL[n.tag]||'Info'}</span>
-    ${isAdm()?`<button onclick="delNote('${n.id}')" style="float:right;padding:4px 10px;border-radius:8px;border:1px solid #F09595;background:var(--red-bg);color:var(--red);font-size:11px;font-weight:600;cursor:pointer;margin-top:8px;">Supprimer</button>":''}
+    ${isMgr()?`<button onclick="delNote('${n.id}')" style="float:right;background:none;border:none;color:var(--text2);font-size:12px;cursor:pointer;margin-top:8px;">✕ Supprimer</button>`:''}
     </div>`;
   }).join('');
 }
@@ -767,7 +634,7 @@ function renderEquipe(){
         <div class="av ${AVC[i%5]}">${ini(m.name)}</div>
         <div class="pinfo"><div class="pnm">${m.name||'?'}</div><div class="psub">${m.email||''}</div></div>
         <span class="pill ${rcls}">${rlbl}</span>
-        ${isAdm()?`<button class="icon-btn" onclick="openEditName('${m.id}')" style="margin-right:4px;">✏️</button><button class="icon-btn" onclick="openEditMembre('${m.id}')">⚙️</button>`:''}
+        ${isAdm()?`<button class="icon-btn" onclick="openEditMembre('${m.id}')">⚙️</button>`:''}
       </div>`;
     });
     h+=`</div>`;
@@ -783,7 +650,7 @@ function renderEquipe(){
         <div class="av ${AVC[i%5]}">${ini(m.name)}</div>
         <div class="pinfo"><div class="pnm">${m.name||'?'}</div></div>
         <span class="pill ${rcls}">${rlbl}</span>
-        ${isAdm()?`<button class="icon-btn" onclick="openEditName('${m.id}')" style="margin-right:4px;">✏️</button><button class="icon-btn" onclick="openEditMembre('${m.id}')">⚙️</button>`:''}
+        ${isAdm()?`<button class="icon-btn" onclick="openEditMembre('${m.id}')">⚙️</button>`:''}
       </div>`;
     });
     h+=`</div>`;
@@ -833,7 +700,6 @@ window.openEditMembre=function(id){
 };
 window.applyRole=async function(){
   if(!editingMember)return;
-  if(!isAdm()){toast('Seul un admin peut modifier les rôles');return;}
   const role=document.getElementById('mrole-select').value;
   const boutique=document.getElementById('mrole-boutique').value;
   await updateDoc(doc(db,'users',editingMember.id),{role,boutique});
@@ -871,16 +737,8 @@ function renderProfil(){
         <span class="role-pill ${rcls}" style="display:inline-block;margin-top:6px;">${rl}</span>
       </div>
     </div>
-    <div class="card" style="margin-top:0;">
-      <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:10px;">Mon compte</div>
-      <button onclick="openChangeName()" style="width:100%;padding:11px;border-radius:10px;border:1.5px solid var(--border);background:white;color:var(--text);font-size:14px;font-weight:600;cursor:pointer;margin-bottom:8px;">✏️ Modifier mon prénom</button>
-    </div>
-    <div class="card">
-      <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:10px;">Application</div>
-      <button onclick="forceUpdate()" style="width:100%;padding:11px;border-radius:10px;border:1.5px solid var(--border);background:white;color:var(--blue);font-size:14px;font-weight:600;cursor:pointer;margin-bottom:8px;">🔄 Mettre à jour l'app</button>
-    </div>
     <button class="logout-btn" onclick="doLogout()">Se déconnecter</button>
-  \`;
+  `;
 }
 window.doLogout=function(){signOut(auth);};
 
@@ -901,106 +759,6 @@ window.openNotifs=async function(){
   }).join('');
 };
 window.closeNotifs=()=>document.getElementById('npanel').classList.remove('open');
-
-window.forceUpdate = function() {
-  if('serviceWorker' in navigator) {
-    navigator.serviceWorker.getRegistrations().then(regs => {
-      regs.forEach(r => r.unregister());
-    });
-  }
-  // Clear all caches
-  if('caches' in window) {
-    caches.keys().then(keys => keys.forEach(k => caches.delete(k)));
-  }
-  toast('🔄 Mise à jour en cours...');
-  setTimeout(() => window.location.reload(true), 1000);
-};
-
-
-// RENFORT PLANNING
-window.openRenfortModal = function() {
-  const sel = document.getElementById('rf-dest-boutique');
-  sel.innerHTML = boutiques.map(b => `<option value="${b.id}">${b.name}</option>`).join('');
-  loadRenfortEmps();
-  openModal('mrenfort');
-};
-window.loadRenfortEmps = function() {
-  const bid = document.getElementById('rf-dest-boutique').value;
-  // Show members NOT from this boutique
-  const others = members.filter(m => m.boutique !== bid);
-  const sel = document.getElementById('rf-emp-select');
-  sel.innerHTML = others.map(m => `<option value="${m.id}">${m.name} (${boutiques.find(b=>b.id===m.boutique)?.name||'?'})</option>`).join('');
-};
-window.saveRenfort = function() {
-  const bid = document.getElementById('rf-dest-boutique').value;
-  const mid = document.getElementById('rf-emp-select').value;
-  const di = parseInt(document.getElementById('rf-day').value);
-  const creneau = document.getElementById('rf-creneau').value;
-  const emp = members.find(m => m.id === mid);
-  const boutDest = boutiques.find(b => b.id === bid);
-  if (!emp || !boutDest) return;
-  const data = wdata(curWeek, bid);
-  if (!data[mid]) data[mid] = DAYS.map(() => mkCell('r'));
-  data[mid][di] = { t: 'rf', s: DEF[creneau]?.s || '09:30', e: DEF[creneau]?.e || '19:00', rfBoutique: boutDest.name, rfFrom: boutiques.find(b=>b.id===emp.boutique)?.name || '?' };
-  closeModal('mrenfort');
-  renderPlanning();
-  toast(`✓ Renfort de ${emp.name} ajouté !`);
-};
-
-
-// FIRST LOGIN CHECK
-async function checkFirstLogin() {
-  if (!curName || curName === 'Admin' || curName === curUser?.email) {
-    document.getElementById('fl-name').value = curName !== curUser?.email ? curName : '';
-    openModal('mfirstlogin');
-  }
-}
-window.saveFirstLogin = async function() {
-  const name = document.getElementById('fl-name').value.trim();
-  if (!name) { toast('Entrez votre prénom et nom'); return; }
-  try {
-    await updateDoc(doc(db, 'users', curUid), { name, firstLoginDone: true });
-    curName = name;
-    document.getElementById('tsub').textContent = `Bonjour, ${curName} 👋`;
-    closeModal('mfirstlogin');
-    renderProfil();
-    toast(`Bienvenue ${name} !`);
-  } catch(e) { toast('Erreur lors de la sauvegarde'); }
-};
-
-// CHANGE OWN NAME
-window.openChangeName = function() {
-  document.getElementById('cn-name').value = curName;
-  openModal('mchangename');
-};
-window.saveChangeName = async function() {
-  const name = document.getElementById('cn-name').value.trim();
-  if (!name) return;
-  await updateDoc(doc(db, 'users', curUid), { name });
-  curName = name;
-  document.getElementById('tsub').textContent = `Bonjour, ${curName} 👋`;
-  closeModal('mchangename');
-  renderProfil();
-  toast('✓ Prénom mis à jour !');
-};
-
-// ADMIN EDIT MEMBER NAME
-let editingNameMember = null;
-window.openEditName = function(id) {
-  editingNameMember = members.find(m => m.id === id);
-  if (!editingNameMember) return;
-  document.getElementById('men-title').textContent = `Modifier : ${editingNameMember.name}`;
-  document.getElementById('en-name').value = editingNameMember.name || '';
-  openModal('meditname');
-};
-window.saveEditName = async function() {
-  const name = document.getElementById('en-name').value.trim();
-  if (!name || !editingNameMember) return;
-  await updateDoc(doc(db, 'users', editingNameMember.id), { name });
-  closeModal('meditname');
-  toast('✓ Nom mis à jour !');
-};
-
 </script>
 </body>
 </html>
