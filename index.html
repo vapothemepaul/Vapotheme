@@ -1,4 +1,4 @@
-!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
@@ -60,7 +60,8 @@
     .mbtn{padding:5px 14px;border-radius:20px;border:none;font-size:11px;font-weight:600;cursor:pointer;color:rgba(255,255,255,0.5);background:rgba(255,255,255,0.08);}
     .mbtn.ae{background:var(--teal-bg);color:var(--teal);}
     .mbtn.aa{background:var(--purple-bg);color:var(--purple);}
-    .page{flex:1;padding:12px;display:none;flex-direction:column;gap:10px;padding-bottom:90px;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:none;}
+    .page{flex:1;padding:12px;display:none;flex-direction:column;gap:10px;padding-bottom:90px;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:none;min-height:0;}
+    .page-spacer{flex:1;min-height:0;}
     .page.active{display:flex;}
     .bottomnav{display:flex;background:var(--navy);padding:8px;padding-bottom:calc(12px + env(safe-area-inset-bottom));gap:4px;position:fixed;bottom:0;left:0;right:0;width:100%;z-index:50;}
     .ntab{flex:1;padding:7px 4px;border:none;background:transparent;color:rgba(255,255,255,0.4);font-size:10px;font-weight:500;cursor:pointer;border-radius:10px;display:flex;flex-direction:column;align-items:center;gap:3px;}
@@ -181,10 +182,11 @@
     <button class="mbtn" id="mba" onclick="setMode('adm')">Vue admin</button>
   </div>
   <div class="page active" id="page-planning"></div>
-  <div class="page" id="page-notes"></div>
-  <div class="page" id="page-equipe"></div>
-  <div class="page" id="page-profil"></div>
+  <div class="page" id="page-notes"><div class="page-spacer"></div></div>
+  <div class="page" id="page-equipe"><div class="page-spacer"></div></div>
+  <div class="page" id="page-profil"><div class="page-spacer"></div></div>
   <button class="fab" id="fab" onclick="fabAction()">+</button>
+  <div style="position:fixed;bottom:0;left:0;right:0;height:calc(80px + env(safe-area-inset-bottom));background:#1a1a2e;z-index:49;"></div>
   <div class="bottomnav">
     <button class="ntab active" id="tab-planning" onclick="showPage('planning')"><span class="ni">📅</span>Planning</button>
     <button class="ntab" id="tab-notes" onclick="showPage('notes')"><span class="ni">📝</span>Annonces</button>
@@ -605,7 +607,7 @@ function renderPlanning(){
     const lbl=isDef?'Enregistrer le planning par défaut':st==='cur'?'Enregistrer & notifier':'Enregistrer le planning';
     h+=`<button class="btn-main" onclick="savePlan()">${lbl}</button>`;
   }
-  pg.innerHTML=h;
+  pg.innerHTML=h+'<div class="page-spacer"></div>';
 }
 
 window.openPE=function(bid,mid,di){
