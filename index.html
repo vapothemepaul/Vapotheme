@@ -412,6 +412,11 @@
 
 <div id="toast"></div>
 
+<script>
+// Global bridges - ensure onclick works before module fully loads  
+function doLogin(){ if(window._doLogin) window._doLogin(); }
+function showPage(p){ if(window._showPage) window._showPage(p); }
+</script>
 <script type="module">
 // Prevent pinch zoom only
 document.addEventListener('touchmove', function(e) {
@@ -491,7 +496,7 @@ window.openModal=id=>document.getElementById(id).classList.add('open');
 window.closeModal=id=>document.getElementById(id).classList.remove('open');
 
 // AUTH
-window.doLogin=async()=>{
+window._doLogin=window.doLogin=async()=>{
   const e=document.getElementById('ae').value.trim(),p=document.getElementById('ap').value;
   document.getElementById('aerr').textContent='';
   if(!e||!p){document.getElementById('aerr').textContent='Remplissez tous les champs.';return;}
@@ -574,7 +579,7 @@ async function loadAll(){
 }
 
 // NAV
-window.showPage=function(p){
+window._showPage=window.showPage=function(p){
   ['planning','notes','equipe','profil'].forEach(x=>{
     document.getElementById('page-'+x).classList.toggle('active',x===p);
     document.getElementById('tab-'+x).classList.toggle('active',x===p);
